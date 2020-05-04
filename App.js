@@ -13,11 +13,13 @@ export default function App() {
   const [condition, setCondition] = useState("");
   const [description, setDescription] = useState("");
   const [icon, setIcon] = useState("");
+  const [dt, setDt] = useState(0);
   const getWeather = async (latitude, longitude) => {
     const {
       data: {
         main: { temp },
         weather,
+        dt,
       },
     } = await axios.get(
       `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`
@@ -26,6 +28,7 @@ export default function App() {
     setCondition(weather[0].main);
     setDescription(weather[0].description);
     setIcon(weather[0].icon);
+    setDt(dt);
   }; // axios.get을 통해 위도 경도 api-key에 따른 data를 줌 API호출 부분이다.
   useEffect(() => {
     async function getLocation() {
@@ -43,7 +46,7 @@ export default function App() {
     getLocation();
   }, []); // 앱이 마운트 될때에 위치 접속 기능 허용여부를 묻고 현재 위치를 받아옴
 
-  return isLoading ? (
+  return isLoading || temp === 0 ? (
     <Loading />
   ) : (
     <Weather
@@ -51,6 +54,7 @@ export default function App() {
       condition={condition}
       description={description}
       icon={icon}
+      dt={dt}
     />
   );
 }
